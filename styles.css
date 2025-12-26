@@ -570,6 +570,14 @@ body {
     margin-bottom: 16px;
 }
 
+.modal-progress {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
 .modal-time, .final-time {
     font-size: 1.1rem;
     color: var(--text-secondary);

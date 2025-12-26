@@ -44,6 +44,7 @@ const elements = {
     themeMenu: document.getElementById('theme-menu'),
     levelModal: document.getElementById('level-modal'),
     victoryModal: document.getElementById('victory-modal'),
+    modalProgress: document.getElementById('modal-progress'),
     modalTime: document.getElementById('modal-time'),
     nextLevel: document.getElementById('next-level'),
     continueBtn: document.getElementById('continue-btn'),
@@ -586,6 +587,8 @@ function checkWin() {
 function handleLevelComplete() {
     if (state.currentLevel < 2) {
         // Show level complete modal
+        const completedLevel = state.currentLevel + 1;
+        elements.modalProgress.textContent = `Level ${completedLevel} of 3 complete`;
         elements.modalTime.textContent = formatTime(state.timer);
         elements.nextLevel.textContent = state.currentLevel + 2;
         elements.levelModal.classList.remove('hidden');
