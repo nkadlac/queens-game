@@ -588,7 +588,7 @@ function handleLevelComplete() {
     if (state.currentLevel < 2) {
         // Show level complete modal
         const completedLevel = state.currentLevel + 1;
-        elements.modalProgress.textContent = `Level ${completedLevel} of 3 complete`;
+        elements.modalProgress.textContent = `Level ${completedLevel} of 3 Complete!`;
         elements.modalTime.textContent = formatTime(state.timer);
         elements.nextLevel.textContent = state.currentLevel + 2;
         elements.levelModal.classList.remove('hidden');
