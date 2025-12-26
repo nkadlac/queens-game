@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queens Ultimate</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="title">Queens Ultimate</h1>
+                <span class="date" id="today-date"></span>
+            </div>
+            <div class="header-right">
+                <span class="level-indicator" id="level-indicator">Level 1 of 3</span>
+                <button class="theme-btn" id="theme-btn" title="Change theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <!-- Theme Menu -->
+                <div class="theme-menu hidden" id="theme-menu">
+                    <button class="theme-option" data-theme="light">Light</button>
+                    <button class="theme-option" data-theme="dark">Dark</button>
+                    <button class="theme-option" data-theme="high-contrast">High Contrast</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">Time</span>
+                <span class="stat-value" id="timer">0:00</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Moves</span>
+                <span class="stat-value" id="moves">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Hints</span>
+                <span class="stat-value" id="hints-used">0</span>
+            </div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="board-wrapper" id="board-wrapper">
+            <div class="board" id="board"></div>
+            <div class="pause-overlay" id="pause-overlay">
+                <span>PAUSED</span>
+            </div>
+            <div class="hint-tooltip hidden" id="hint-tooltip">
+                <span id="hint-reason"></span>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="control-btn" id="pause-btn">
+                <svg class="icon-pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+                <svg class="icon-play hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="5,3 19,12 5,21"></polygon>
+                </svg>
+                <span>Pause</span>
+            </button>
+            <button class="control-btn" id="undo-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="1,4 1,10 7,10"></polyline>
+                    <path d="M3.51,15a9,9,0,1,0,2.13-9.36L1,10"></path>
+                </svg>
+                <span>Undo</span>
+            </button>
+            <button class="control-btn" id="reset-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23,4 23,10 17,10"></polyline>
+                    <polyline points="1,20 1,14 7,14"></polyline>
+                    <path d="M3.51,9a9,9,0,0,1,14.85-3.36L23,10M1,14l4.64,4.36A9,9,0,0,0,20.49,15"></path>
+                </svg>
+                <span>Reset</span>
+            </button>
+            <button class="control-btn" id="hint-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9.09,9a3,3,0,0,1,5.83,1c0,2-3,3-3,3"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Hint</span>
+                <span class="hint-cooldown hidden" id="hint-cooldown"></span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div class="modal hidden" id="level-modal">
+        <div class="modal-content">
+            <h2>Level Complete!</h2>
+            <p class="modal-time">Time so far: <span id="modal-time"></span></p>
+            <button class="modal-btn" id="continue-btn">Continue to Level <span id="next-level"></span></button>
+        </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div class="modal hidden" id="victory-modal">
+        <div class="modal-content victory">
+            <h2>Daily Challenge Complete!</h2>
+            <div class="flawless-badge hidden" id="flawless-badge">FLAWLESS!</div>
+            <p class="final-time">Final Time: <span id="final-time"></span></p>
+            <p class="hints-count" id="hints-count"></p>
+            <button class="modal-btn share-btn" id="share-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Share Results
+            </button>
+            <button class="modal-btn secondary" id="play-again-btn">Play Again Tomorrow</button>
+        </div>
+    </div>
+
+    <script src="puzzles.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
