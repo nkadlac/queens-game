@@ -110,6 +110,13 @@ function setupEventListeners() {
         }
     });
 
+    // Auto-pause when tab loses focus
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && !state.isPaused && state.timerStarted) {
+            pauseGame();
+        }
+    });
+
     // Modal buttons
     elements.continueBtn.addEventListener('click', () => {
         elements.levelModal.classList.add('hidden');
@@ -645,23 +652,39 @@ function formatTime(seconds) {
    ======================================== */
 
 function togglePause() {
-    state.isPaused = !state.isPaused;
+    if (state.isPaused) {
+        resumeGame();
+    } else {
+        pauseGame();
+    }
+}
+
+function pauseGame() {
+    if (state.isPaused) return; // Already paused
+    state.isPaused = true;
 
     const iconPause = elements.pauseBtn.querySelector('.icon-pause');
     const iconPlay = elements.pauseBtn.querySelector('.icon-play');
     const label = elements.pauseBtn.querySelector('span');
 
-    if (state.isPaused) {
-        elements.pauseOverlay.classList.add('visible');
-        iconPause.classList.add('hidden');
-        iconPlay.classList.remove('hidden');
-        label.textContent = 'Resume';
-    } else {
-        elements.pauseOverlay.classList.remove('visible');
-        iconPause.classList.remove('hidden');
-        iconPlay.classList.add('hidden');
-        label.textContent = 'Pause';
-    }
+    elements.pauseOverlay.classList.add('visible');
+    iconPause.classList.add('hidden');
+    iconPlay.classList.remove('hidden');
+    label.textContent = 'Resume';
+}
+
+function resumeGame() {
+    if (!state.isPaused) return; // Already running
+    state.isPaused = false;
+
+    const iconPause = elements.pauseBtn.querySelector('.icon-pause');
+    const iconPlay = elements.pauseBtn.querySelector('.icon-play');
+    const label = elements.pauseBtn.querySelector('span');
+
+    elements.pauseOverlay.classList.remove('visible');
+    iconPause.classList.remove('hidden');
+    iconPlay.classList.add('hidden');
+    label.textContent = 'Pause';
 }
 
 function undo() {
