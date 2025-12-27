@@ -45,10 +45,6 @@
                 <span class="stat-value" id="timer">0:00</span>
             </div>
             <div class="stat">
-                <span class="stat-label">Moves</span>
-                <span class="stat-value" id="moves">0</span>
-            </div>
-            <div class="stat">
                 <span class="stat-label">Hints</span>
                 <span class="stat-value" id="hints-used">0</span>
             </div>
@@ -58,7 +54,17 @@
         <div class="board-wrapper" id="board-wrapper">
             <div class="board" id="board"></div>
             <div class="pause-overlay" id="pause-overlay">
-                <span>PAUSED</span>
+                <button class="start-game-btn" id="start-game-btn">
+                    START GAME
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5,3 19,12 5,21"></polygon>
+                    </svg>
+                </button>
+                <button class="pause-play-btn hidden" id="pause-play-btn" title="Resume">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="#150C09">
+                        <polygon points="5,3 19,12 5,21"></polygon>
+                    </svg>
+                </button>
             </div>
             <div class="hint-tooltip hidden" id="hint-tooltip">
                 <span id="hint-reason"></span>

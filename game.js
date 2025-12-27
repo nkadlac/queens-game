@@ -11,10 +11,10 @@ const state = {
     timer: 0,
     timerInterval: null,
     timerStarted: false,
-    isPaused: false,
+    isPaused: true,
+    gameStarted: false,
     hintsUsed: 0,
     hintCooldown: false,
-    moves: 0,
     theme: 'light',
     isDragging: false,
     didDragMove: false,  // Track if mouse moved during drag
@@ -28,8 +28,9 @@ const elements = {
     board: document.getElementById('board'),
     boardWrapper: document.getElementById('board-wrapper'),
     pauseOverlay: document.getElementById('pause-overlay'),
+    pausePlayBtn: document.getElementById('pause-play-btn'),
+    startGameBtn: document.getElementById('start-game-btn'),
     timer: document.getElementById('timer'),
-    moves: document.getElementById('moves'),
     hintsUsed: document.getElementById('hints-used'),
     levelIndicator: document.getElementById('level-indicator'),
     todayDate: document.getElementById('today-date'),
@@ -85,11 +86,16 @@ function init() {
 
     // Set up event listeners
     setupEventListeners();
+
+    // Show overlay with start button (game starts paused)
+    elements.pauseOverlay.classList.add('visible');
 }
 
 function setupEventListeners() {
     // Control buttons
     elements.pauseBtn.addEventListener('click', togglePause);
+    elements.pausePlayBtn.addEventListener('click', resumeGame);
+    elements.startGameBtn.addEventListener('click', startGame);
     elements.undoBtn.addEventListener('click', undo);
     elements.resetBtn.addEventListener('click', resetLevel);
     elements.hintBtn.addEventListener('click', showHint);
@@ -112,7 +118,7 @@ function setupEventListeners() {
 
     // Auto-pause when tab loses focus
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden && !state.isPaused && state.timerStarted) {
+        if (document.hidden && !state.isPaused && state.gameStarted) {
             pauseGame();
         }
     });
@@ -152,11 +158,9 @@ function loadLevel(levelIndex) {
         Array(puzzle.size).fill(CELL_EMPTY)
     );
     state.moveHistory = [];
-    state.moves = 0;
 
     // Update UI
     elements.levelIndicator.textContent = `Level ${levelIndex + 1} of 3`;
-    elements.moves.textContent = '0';
 
     // Render the board
     renderBoard(puzzle);
@@ -165,6 +169,9 @@ function loadLevel(levelIndex) {
 function renderBoard(puzzle) {
     elements.board.innerHTML = '';
     elements.board.style.gridTemplateColumns = `repeat(${puzzle.size}, 1fr)`;
+
+    // Set grid size CSS variable for pause overlay grid lines
+    elements.boardWrapper.style.setProperty('--grid-size', puzzle.size);
 
     for (let row = 0; row < puzzle.size; row++) {
         for (let col = 0; col < puzzle.size; col++) {
@@ -292,18 +299,11 @@ function handleTouchMove(e) {
 }
 
 function markCell(row, col) {
-    // Start timer on first interaction
-    if (!state.timerStarted) {
-        startTimer();
-    }
-
     // Save to history for undo
     state.moveHistory.push({ row, col, prevState: CELL_EMPTY });
 
     // Mark the cell
     state.board[row][col] = CELL_MARKER;
-    state.moves++;
-    elements.moves.textContent = state.moves;
     updateCellDisplay(row, col);
 
     // Check if hint was completed
@@ -321,11 +321,6 @@ function handleCellClick(row, col) {
         return;
     }
     if (state.isPaused) return;
-
-    // Start timer on first click
-    if (!state.timerStarted) {
-        startTimer();
-    }
 
     // Get current cell state
     const currentState = state.board[row][col];
@@ -352,8 +347,6 @@ function handleCellClick(row, col) {
 
     // Update state
     state.board[row][col] = newState;
-    state.moves++;
-    elements.moves.textContent = state.moves;
 
     // Update cell display
     updateCellDisplay(row, col);
@@ -651,7 +644,30 @@ function formatTime(seconds) {
    CONTROLS
    ======================================== */
 
+function startGame() {
+    state.gameStarted = true;
+    state.isPaused = false;
+
+    // Hide start button, keep play button hidden for now
+    elements.startGameBtn.classList.add('hidden');
+    elements.pauseOverlay.classList.remove('visible');
+
+    // Start the timer
+    startTimer();
+
+    // Update pause button state
+    const iconPause = elements.pauseBtn.querySelector('.icon-pause');
+    const iconPlay = elements.pauseBtn.querySelector('.icon-play');
+    const label = elements.pauseBtn.querySelector('span');
+
+    iconPause.classList.remove('hidden');
+    iconPlay.classList.add('hidden');
+    label.textContent = 'Pause';
+}
+
 function togglePause() {
+    if (!state.gameStarted) return; // Can't toggle pause before game starts
+
     if (state.isPaused) {
         resumeGame();
     } else {
@@ -667,6 +683,9 @@ function pauseGame() {
     const iconPlay = elements.pauseBtn.querySelector('.icon-play');
     const label = elements.pauseBtn.querySelector('span');
 
+    // Show play button (not start button) when pausing during game
+    elements.startGameBtn.classList.add('hidden');
+    elements.pausePlayBtn.classList.remove('hidden');
     elements.pauseOverlay.classList.add('visible');
     iconPause.classList.add('hidden');
     iconPlay.classList.remove('hidden');
@@ -681,6 +700,8 @@ function resumeGame() {
     const iconPlay = elements.pauseBtn.querySelector('.icon-play');
     const label = elements.pauseBtn.querySelector('span');
 
+    // Hide play button when resuming
+    elements.pausePlayBtn.classList.add('hidden');
     elements.pauseOverlay.classList.remove('visible');
     iconPause.classList.remove('hidden');
     iconPlay.classList.add('hidden');
@@ -736,7 +757,6 @@ function resetLevel() {
 
 function showHint() {
     if (state.hintCooldown || state.isPaused) return;
-    if (!state.timerStarted) startTimer();
 
     const puzzle = state.puzzles[state.currentLevel];
     const size = puzzle.size;

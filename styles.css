@@ -5,7 +5,7 @@
 
 /* Light Theme (Default) */
 :root {
-    --bg-primary: #f5f5f7;
+    --bg-primary: #D1EEFD;
     --bg-secondary: #ffffff;
     --bg-tertiary: #e8e8ed;
     --accent: #e94560;
@@ -200,16 +200,17 @@ body {
 .board-wrapper {
     position: relative;
     margin-bottom: 60px;
+    border: 5px solid var(--region-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow);
 }
 
 .board {
     display: grid;
     gap: 1px;
-    border-radius: 12px;
+    border-radius: 7px;
     overflow: hidden;
-    box-shadow: 0 4px 12px var(--shadow);
     aspect-ratio: 1;
-    border: 2px solid var(--region-border);
     background: var(--grid-line);
 }
 
@@ -358,12 +359,17 @@ body {
 .pause-overlay {
     position: absolute;
     inset: 0;
-    background: var(--bg-primary);
-    backdrop-filter: blur(10px);
+    background:
+        linear-gradient(to right, rgba(0, 0, 0, 0.7) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 1px, transparent 1px),
+        var(--bg-primary);
+    background-size: calc(100% / var(--grid-size, 9)) calc(100% / var(--grid-size, 9)),
+                     calc(100% / var(--grid-size, 9)) calc(100% / var(--grid-size, 9)),
+                     100% 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 7px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -379,6 +385,63 @@ body {
     font-weight: 700;
     color: var(--text-secondary);
     letter-spacing: 4px;
+}
+
+/* Start game button */
+.start-game-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 32px;
+    background: #67caee;
+    color: #1a1a1a;
+    border: 3px solid #1a1a1a;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #1a1a1a;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.start-game-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 #1a1a1a;
+}
+
+.start-game-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #1a1a1a;
+}
+
+/* Pause play button */
+.pause-play-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 82px;
+    height: 82px;
+    background: #67caee;
+    border: 8px solid white;
+    border-radius: 50%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pause-play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pause-play-btn:active {
+    transform: scale(0.98);
+}
+
+.pause-play-btn svg {
+    margin-left: 4px; /* Optical centering for play icon */
 }
 
 /* Hint tooltip */
